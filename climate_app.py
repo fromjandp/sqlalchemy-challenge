@@ -7,7 +7,7 @@ import numpy as np
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, inspect
 
 from flask import Flask, jsonify
 
@@ -60,7 +60,7 @@ def home_page():
 #
 
 @app.route("/api/v1.0/precipitation")
-def precipitation():
+def precipitations():
 
     session = Session(engine)
     results = session.query(measurement.date, measurement.prcp).all()
@@ -72,7 +72,7 @@ def precipitation():
     for date, prcp in results:
         precipitation_dict = {}
         precipitation_dict["date"] = date
-        precipitation_dict["prcp"]  = precipitation
+        precipitation_dict["prcp"]  = prcp
         all_precipitation.append(precipitation_dict)
         
     
