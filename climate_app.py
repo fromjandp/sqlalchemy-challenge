@@ -46,13 +46,13 @@ app = Flask(__name__)
 @app.route("/")
 def home_page():
     return (
-        f"Welcome to the Climate App API!<br/>"
-        f"Available Routes:<br/><br/>"
+        f"Welcome to the Climate App API!<br/><br/>"
+        f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<end><br/>"
+        f"/api/v1.0/<start>/<end><br/>"
     )
 
 #
@@ -74,11 +74,10 @@ def precipitation():
         precipitation_dict = {}
         precipitation_dict["date"] = date
         precipitation_dict["prcp"]  = prcp
-        all_precipitation.append(precipitation_dict)
-        
-    
-    return jsonify(all_precipitation
+        all_precipitation.append(precipitation_dict
     )
+        
+    return jsonify(all_precipitation)
 
 #
 # stations api
@@ -95,7 +94,6 @@ def stations():
     return jsonify(all_stations
     )
 
-
 #
 # tobs api
 #
@@ -105,6 +103,7 @@ def tobs():
     return (
         f"tobs path"
     )
+
 
 # #######################################
 # Call the main Development Flask Server
