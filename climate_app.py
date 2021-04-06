@@ -121,19 +121,14 @@ def tobs():
 def startdate(start=None):
 
     session = Session(engine)
-    tmin = [func.min(measurement.tobs)]
     
-    sel = tmin
-    
+    sel = [func.min(measurement.tobs),func.avg(measurement.tobs),func.max(measurement.tobs)]
     results = session.query(*sel).filter(measurement.date >= start).all()
-    print(sel)
-    
-    temperatures = list(np.ravel(results))
+      
+    temperaturestats = list(np.ravel(results))
     
     session.close()
-    return jsonify(temperatures=temperatures)
-
-
+    return jsonify(temperaturestats=temperaturestats)
 
 # #######################################
 # Call the main Development Flask Server
