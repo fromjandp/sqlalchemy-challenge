@@ -2,13 +2,13 @@
 # Imports
 # #######################################
 
-import numpy as np
-
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect
 
+import numpy as np
+import datetime as dt
 from flask import Flask, jsonify
 
 # #######################################
@@ -63,21 +63,17 @@ def home_page():
 def precipitation():
 
     session = Session(engine)
-    results = session.query(measurement.date, measurement.prcp).all()
-
+    prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    results = session.query(measurement.date, measurement.prcp).filter(measurement.date >= prev_year)
+    
     session.close()
+    
+    # date is the key and the precipitation is the value
+    selected_precipitation  = {date: prcp for date, prcp in results}
 
 # Create a dictionary from the rows of data, and append to a list all_precipitation
 
-    all_precipitation = []
-    for date, prcp in results:
-        precipitation_dict = {}
-        precipitation_dict["date"] = date
-        precipitation_dict["prcp"]  = prcp
-        all_precipitation.append(precipitation_dict
-    )
-        
-    return jsonify(all_precipitation)
+    return jsonify(selected_precipitation)
 
 #
 # stations api
