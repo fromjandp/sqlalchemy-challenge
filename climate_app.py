@@ -52,7 +52,7 @@ def home_page():
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/date/yyyy-mm-dd<br/>"
-       
+        f"/api/v1.0/date/yyyy-mm-dd/yyyy-mm-dd"       
     )
 
 #
@@ -108,26 +108,42 @@ def tobs():
 
     session.close()
 
+    # unravel the results and convert to a list.
     temperatures = list(np.ravel(results))
    
     return jsonify(temperatures)
 
 #
-# start date api
-#    Calculate the min,
-#
+# START DATE api . . .
+#    Calculate the min,avg and max 
+#    When just start date is given:      get the min, avg and max for alldates greater than and equal to the start 
+#               
+# START DATE and END DATE api . . .
+#    Calculate the min,avg and max
+#    When start date and end date given: get the min, avg and max for (all dates greater than and equal to the start date) and
+#                                                                     (all dates less than and equal to the end date)
 
 @app.route("/api/v1.0/date/<start>")
-def startdate(start=None):
+@app.route("/api/v1.0/date/<start>/<end>")
+def startdate(start=None, end=None):
 
     session = Session(engine)
     
     sel = [func.min(measurement.tobs),func.avg(measurement.tobs),func.max(measurement.tobs)]
-    results = session.query(*sel).filter(measurement.date >= start).all()
-      
+    
+    if not end:
+        # calculate the min, avg and max temps for the dates greater than and equal to the start date entered
+        results = session.query(*sel).filter(measurement.date >= start).all()
+    else:
+        # calculate the min, avg and max temps for: ( the dates greater than and equal to the start date entered)
+        #                                       and (the dates less than or equal to the end date entered).
+        results = session.query(*sel).filter(measurement.date >= start).filter(measurement.date <= end).all()
+         
+    session.close()
+    
+    # unravel the results and convert to a list.
     temperaturestats = list(np.ravel(results))
     
-    session.close()
     return jsonify(temperaturestats=temperaturestats)
 
 # #######################################
