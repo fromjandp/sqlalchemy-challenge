@@ -63,6 +63,7 @@ def home_page():
 def precipitation():
 
     session = Session(engine)
+    
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
     results = session.query(measurement.date, measurement.prcp).filter(measurement.date >= prev_year)
     
@@ -82,13 +83,14 @@ def precipitation():
 @app.route("/api/v1.0/stations")
 def stations():
 
-    all_stations = []
     session = Session(engine)
+    
+    all_stations = []
     all_stations = session.query(station.station).all()
  
     session.close()
-    return jsonify(all_stations
-    )
+    
+    return jsonify(all_stations)
 
 #
 # tobs api
@@ -96,10 +98,19 @@ def stations():
 
 @app.route("/api/v1.0/tobs")
 def tobs():
-    return (
-        f"tobs path"
-    )
 
+    session = Session(engine)
+    
+    start_date = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    results = session.query(measurement.tobs).\
+        filter(measurement.station == 'USC00519281').\
+        filter(measurement.date >= start_date).all()
+
+    session.close()
+
+    temperatures = list(np.ravel(results))
+   
+    return jsonify(temperatures)
 
 # #######################################
 # Call the main Development Flask Server
