@@ -71,7 +71,7 @@ def precipitation():
     # date is the key and the precipitation is the value
     selected_precipitation  = {date: prcp for date, prcp in results}
 
-# Create a dictionary from the rows of data, and append to a list all_precipitation
+    # Create a dictionary from the rows of data, and append to a list all_precipitation
 
     return jsonify(selected_precipitation)
 
