@@ -51,8 +51,8 @@ def home_page():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/<start><br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/date/yyyy-mm-dd<br/>"
+       
     )
 
 #
@@ -111,6 +111,29 @@ def tobs():
     temperatures = list(np.ravel(results))
    
     return jsonify(temperatures)
+
+#
+# start date api
+#    Calculate the min,
+#
+
+@app.route("/api/v1.0/date/<start>")
+def startdate(start=None):
+
+    session = Session(engine)
+    tmin = [func.min(measurement.tobs)]
+    
+    sel = tmin
+    
+    results = session.query(*sel).filter(measurement.date >= start).all()
+    print(sel)
+    
+    temperatures = list(np.ravel(results))
+    
+    session.close()
+    return jsonify(temperatures=temperatures)
+
+
 
 # #######################################
 # Call the main Development Flask Server
